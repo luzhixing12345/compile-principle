@@ -1,0 +1,5 @@
+A -> BCc | gDB
+B -> bCDE |ε
+C -> DaB | ca
+D -> dD |ε
+E -> gAf | c

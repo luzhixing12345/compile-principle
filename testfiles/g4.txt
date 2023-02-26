@@ -1,0 +1,5 @@
+E -> TG
+G -> +TG|-TG|ε
+T -> FH
+H -> *FH|/FH|ε
+F -> (E) | q

@@ -3,6 +3,7 @@ import os
 import logging
 import itertools
 
+
 class Core:
 
     def __init__(self, file_path='') -> None:
@@ -12,6 +13,9 @@ class Core:
         self.grammar = Grammar()
         self.logger = Logger()
         self.parse_file(file_path)
+
+        # 输出参数
+        self.line_length = 20
 
     def parse_file(self, file_path: str):
 
@@ -41,21 +45,22 @@ class Core:
                 exit()
             production_statement = production_rule[0].strip()
             if len(production_statement) != 1:
-                self.log("产生式规则的左侧应为单个终结符:", production_statement)
+                self.log("产生式规则的左侧应为单个终结符: " + production_statement)
                 exit()
 
             if i == 0:
                 self.grammar.begin_symbol = production_statement  # 起始符号
-            
+
             if self.grammar.productions.get(production_statement) is None:
                 self.grammar.productions[production_statement] = []
             # 展开所有产生式
             production_alternatives = production_rule[1].split('|')
             for production_alternative in production_alternatives:
-                self.grammar.productions[production_statement].append(production_alternative.strip())
+                self.grammar.productions[production_statement].append(
+                    production_alternative.strip())
 
         self.grammar.parse()
-        self.log(self.grammar,debug=True)
+        self.log(self.grammar, debug=True)
 
     def debug(self):
         '''设置日志等级为DEBUG: 展示更多信息'''
@@ -64,6 +69,22 @@ class Core:
     def log(self, info: str, debug=False):
         return self.logger.log(info, debug)
 
+    def print_table(self, name ,table, debug = False):
+        self._split_line(name, debug = debug)
+
+        for key, value in table.items():
+            self.log(f'  {key}: {str(value)}', debug = debug)
+        self._split_line(debug = debug)
+
+    def _split_line(self, name="", debug = False):
+
+        if name != "":
+            space_number = (self.line_length - len(name) - 1) // 2
+            self.log('*'*self.line_length, debug = debug)
+            self.log(' ' * space_number + name + ' ' * space_number, debug = debug)
+            self.log('*'*self.line_length, debug = debug)
+        else:
+            self.log('*' * self.line_length, debug = debug)
 
 class Logger:
 
@@ -119,4 +140,3 @@ class Grammar:
             for symbol in production_alternative:
                 if symbol not in self.non_terminal_symbols:
                     self.terminal_symbols.append(symbol)
-        
