@@ -8,14 +8,11 @@ class Core:
 
     def __init__(self, file_path='') -> None:
         '''上下文无关文法 Context-Free Grammar(CFG)'''
-        self.epsilon = 'ε'
+        
         self.file_content = None
         self.grammar = Grammar()
         self.logger = Logger()
         self.parse_file(file_path)
-
-        # 输出参数
-        self.line_length = 20
 
     def parse_file(self, file_path: str):
 
@@ -43,21 +40,24 @@ class Core:
             if len(production_rule) != 2:
                 self.log(line, "不符合产生式规范: S -> A | b")
                 exit()
-            production_statement = production_rule[0].strip()
-            if len(production_statement) != 1:
-                self.log("产生式规则的左侧应为单个终结符: " + production_statement)
+            production_head = production_rule[0].strip()
+            if len(production_head) != 1:
+                self.log("产生式规则的左侧应为单个终结符: " + production_head)
                 exit()
 
             if i == 0:
-                self.grammar.begin_symbol = production_statement  # 起始符号
+                self.grammar.begin_symbol = production_head  # 起始符号
 
-            if self.grammar.productions.get(production_statement) is None:
-                self.grammar.productions[production_statement] = []
+            if self.grammar.productions.get(production_head) is None:
+                self.grammar.productions[production_head] = []
             # 展开所有产生式
-            production_alternatives = production_rule[1].split('|')
-            for production_alternative in production_alternatives:
-                self.grammar.productions[production_statement].append(
-                    production_alternative.strip())
+            production_bodys = production_rule[1].split('|')
+            for production_body in production_bodys:
+                production_body = production_body.strip()
+                if self.grammar.epsilon in production_body and len(production_body) != 1:
+                    self.log(f"产生式 {production_body} 中不应出现 {self.grammar.epsilon}")
+                    exit()
+                self.grammar.productions[production_head].append(production_body)
 
         self.grammar.parse()
         self.log(self.grammar, debug=True)
@@ -72,19 +72,17 @@ class Core:
     def print_table(self, name ,table, debug = False):
         self._split_line(name, debug = debug)
 
+        max_str_length = max(len(s) for s in table.keys()) + 1
         for key, value in table.items():
-            self.log(f'  {key}: {str(value)}', debug = debug)
+            self.log(f'   {key:<{max_str_length}}: {str(value)}', debug = debug)
         self._split_line(debug = debug)
 
     def _split_line(self, name="", debug = False):
 
         if name != "":
-            space_number = (self.line_length - len(name) - 1) // 2
-            self.log('*'*self.line_length, debug = debug)
-            self.log(' ' * space_number + name + ' ' * space_number, debug = debug)
-            self.log('*'*self.line_length, debug = debug)
+            self.log('*' + name + '*\n', debug = debug)
         else:
-            self.log('*' * self.line_length, debug = debug)
+            self.log('', debug = debug)
 
 class Logger:
 
@@ -117,6 +115,7 @@ class Grammar:
     def __init__(self) -> None:
 
         self.begin_symbol = 'S'
+        self.epsilon = 'ε'
         self.non_terminal_symbols = []
         self.terminal_symbols = []
         self.productions = {}
@@ -125,9 +124,9 @@ class Grammar:
 
         output_str = f'起始符号: {self.begin_symbol}\n'
         output_str += '产生式:\n'
-        for production_statement, production_alternatives in self.productions.items():
-            for production_alternative in production_alternatives:
-                output_str += f'  {production_statement} -> {production_alternative}\n'
+        for production_head, production_bodys in self.productions.items():
+            for production_body in production_bodys:
+                output_str += f'  {production_head} -> {production_body}\n'
         output_str += f'非终结符: {str(self.non_terminal_symbols)}\n'
         output_str += f'终结符: {str(self.terminal_symbols)}\n'
         return output_str
@@ -136,7 +135,7 @@ class Grammar:
         # 产生式左侧的是非终结符
         self.non_terminal_symbols = list(self.productions.keys())
         # 在右侧但不在左侧的符号是终结符
-        for production_alternative in itertools.chain.from_iterable(self.productions.values()):
-            for symbol in production_alternative:
+        for production_body in itertools.chain.from_iterable(self.productions.values()):
+            for symbol in production_body:
                 if symbol not in self.non_terminal_symbols:
                     self.terminal_symbols.append(symbol)
