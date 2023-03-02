@@ -1,12 +1,10 @@
 
 from .base import Core
-from .ffs import FFS
 
 class LL1(Core):
     
-    def __init__(self, file_path='') -> None:
+    def __init__(self, file_path) -> None:
         super().__init__(file_path)
-        self.ffs = FFS(file_path)
         
     def get_analysis_table(self):
         
