@@ -18,7 +18,7 @@ class FFS(Core):
             init_first_set[non_terminal_symbol] = set()
         
         self.first_set = self._calculate_first_set(init_first_set)
-        self._print_set("最终first set",self.first_set)
+        self._print_set("[first set]:",self.first_set)
         
     def _calculate_first_set(self, first_set):
         
@@ -72,7 +72,7 @@ class FFS(Core):
         init_follow_set[self.grammar.begin_symbol].add('$')
         
         self.follow_set = self._calculate_follow_set(init_follow_set)
-        self._print_set("最终follow set", self.follow_set)
+        self._print_set("[follow set]:", self.follow_set)
     
     def _calculate_follow_set(self, follow_set):
         
@@ -152,7 +152,7 @@ class FFS(Core):
                     # 该产生式的select集是第一个字符的first集
                     self.select_set[production] = self.first_set[first_char]
         
-        self._print_set('select集',self.select_set)
+        self._print_set('[select set]:',self.select_set)
         return self.select_set
     
     def run(self):
