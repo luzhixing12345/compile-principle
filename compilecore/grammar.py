@@ -138,9 +138,39 @@ class CFG(Grammar):
     
     def eliminate_left_public_factor(self):
         
+        extend_productions = {}
+        
         for production_head, producton_bodys in self.productions.items():
-            prefix = os.path.commonprefix(producton_bodys)
-            print(prefix)
+            
+            trie = Trie(producton_bodys) # 字典树
+            common_nodes = trie.find_common_prefixes() # 找到公共前缀组
+            if len(common_nodes) != 0:
+                for node in common_nodes:
+                    print(f"[{production_head} 存在左公因子]: {node.prefix}")
+                extend_productions[production_head] = common_nodes
+        
+        for production_head, common_nodes in extend_productions.items():
+            
+            productions = self.productions[production_head]
+            self.productions[production_head] = [] # 清空
+            remove_productions = []
+            for node in common_nodes:
+                node: TrieNode
+                prefix = node.prefix
+                new_symbol = self._register_new_symbol()
+                self.productions[production_head].append(prefix + new_symbol) # 替换左公因子
+                self.productions[new_symbol] = node.children_str # 新非终结符的产生式
+                remove_productions.extend([prefix + i for i in node.children_str])
+                
+            rest_productions = [i for i in productions if i not in remove_productions]
+            self.productions[production_head].extend(rest_productions) # 保留剩下的没有影响的因子
+        
+        if extend_productions != {}:
+            # 递归
+            # 因为消除共同前缀之后还可能继续有共同前缀
+            # S -> S + A | S - A | S + B
+            self.eliminate_left_public_factor()
+                
     
     def calculate_first_set(self):
         
@@ -302,6 +332,7 @@ class CFG(Grammar):
         
     def _register_new_symbol(self):
         '''选择一个新的非终结符修正原文法'''
+        
         for i in range(ord('A'), ord('Z') + 1):
             new_symbol = chr(i)
             if new_symbol not in self.non_terminal_symbols and \
@@ -321,4 +352,46 @@ class CFG(Grammar):
                 return new_symbol
         
         raise ValueError("没有可用字符")
+
+class TrieNode:
+    def __init__(self, char):
+        self.char = char
+        self.children = {}
+        self.children_str = []
+        self.prefix = ''
+        self.counter = 1
+
+class Trie:
+    def __init__(self, words):
+        self.root = TrieNode('')
+        for word in words:
+            self.insert(word)  
+        
+    def insert(self, word):
+        node = self.root
+        for i in range(len(word)):
+            char = word[i]
+            if char in node.children:
+                node.children_str.append(word[i:])
+                node = node.children[char]
+                node.counter += 1
+            else:
+                new_node = TrieNode(char)
+                node.children[char] = new_node
+                node.children_str.append(word[i:])
+                new_node.prefix = node.prefix + char
+                node = new_node
+        
+    def find_common_prefixes(self):
+
+        common_nodes = []
+        
+        for char in self.root.children:
+            node:TrieNode = self.root.children[char]
+            if node.counter > 1:
+                while node.counter > 1 and len(node.children) == 1:
+                    node = list(node.children.values())[0]
+                common_nodes.append(node)
+        
+        return common_nodes
     
