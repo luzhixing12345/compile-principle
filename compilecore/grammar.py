@@ -92,11 +92,8 @@ class CFG(Grammar):
             self.productions[symbol] = new_productions
         
         if extend_symbols != {}:
-            output_str = '[修正后的产生式]:\n'
-            for production_head, production_bodys in self.productions.items():
-                for production_body in production_bodys:
-                    output_str += f'  {production_head} -> {production_body}\n'
-            print(output_str)
+            print('[修正后的产生式]:')
+            self.show_productions()
         
     def eliminate_direct_left_recursion(self):
         
@@ -313,22 +310,23 @@ class CFG(Grammar):
                     # 如果第一个字符是非终结符
                     # 该产生式的select集是第一个字符的first集
                     self.select_set[production] = self.first_set[first_char]
-        
+    
 
-    def info(self) -> str:
+    def info(self):
 
-        output_str = f'[起始符号]: {self.begin_symbol}\n'
-        output_str += '[产生式]:\n'
-        for production_head, production_bodys in self.productions.items():
-            for production_body in production_bodys:
-                output_str += f'  {production_head} -> {production_body}\n'
-        output_str += f'[非终结符]: {str(self.non_terminal_symbols)}\n'
-        output_str += f'[终结符  ]: {str(self.terminal_symbols)}\n'
+        print(f'[起始符号]: {self.begin_symbol}')
+        print(f'[非终结符]: {str(self.non_terminal_symbols)}')
+        print(f'[终结符  ]: {str(self.terminal_symbols)}')
         
-        print(output_str)
         print_set("[first set]:",self.first_set)
         print_set("[follow set]:", self.follow_set)
         print_set('[select set]:',self.select_set)
+    
+    def show_productions(self):
+        print('[产生式]:')
+        for production_head, production_bodys in self.productions.items():
+            for production_body in production_bodys:
+                print(f'  {production_head} -> {production_body}')
         
     def _register_new_symbol(self):
         '''选择一个新的非终结符修正原文法'''

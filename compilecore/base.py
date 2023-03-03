@@ -56,5 +56,4 @@ class Core:
 
         self.grammar.parse()
         self.grammar.info()
-
-
+        self.grammar.show_productions()
