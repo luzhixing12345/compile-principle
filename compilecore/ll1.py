@@ -1,8 +1,8 @@
 
-from .base import Core
+from .base import CFGCore
 from .utils import print_LL1_table, print_ll1_analysis_table
 
-class LL1(Core):
+class LL1(CFGCore):
     
     def __init__(self, file_path) -> None:
         super().__init__(file_path)

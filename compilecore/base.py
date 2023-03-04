@@ -7,7 +7,6 @@ class Core:
 
     def __init__(self, file_path) -> None:
         
-        self.grammar = CFG()
         self.read_file(file_path)
 
     def read_file(self, file_path: str):
@@ -26,6 +25,17 @@ class Core:
 
     def parse_grammar(self, file_content):
         '''解析产生式'''
+        raise NotImplementedError
+        
+
+class CFGCore(Core):
+    
+    def __init__(self, file_path) -> None:
+        super().__init__(file_path)
+        
+    def parse_grammar(self, file_content):
+        
+        self.grammar = CFG()
 
         if len(file_content) == 0:
             raise ValueError('文件内容为空')
