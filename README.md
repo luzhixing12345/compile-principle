@@ -6,9 +6,10 @@
 
 ### 基础算法
 
-- [x] prefix-infix-suffix: 前缀中缀后缀表达式转换
-- [x] RE-NFA-DFA: 正则-非确定性有穷自动机-确定性有穷自动机
 - [x] FIRST-FOLLOW-SELECT: first集 follow集 select集
+  - [x] 消除间接左递归
+  - [x] 消除直接左递归
+  - [x] 消除左公因子
 - [x] LL1: LL1文法
 - [ ] LR0-SLR1
 - [ ] LR1
@@ -17,15 +18,19 @@
 ### 应用项目
 
 - [x] 四则运算: 支持()*/+-
-- [ ] C语言编译器
+- [ ] RE: 正则表达式解析器
+- [ ] DSL(ffmpeg脚本?)
+- [ ] lua
+- [ ] GCC
 
-## 安装 & 使用 & 文档
+  - [ ] make
+  - [ ] cpp + ld
+  - [ ] gcc + as + gdb
 
-```bash
-pip install compilecore
-```
 
-CompileCore 是一个学习为导向的集成编译原理库, 您可以浏览[文档](https://luzhixing12345.github.io/CompileCore/)以查阅
+## 使用 & 文档
+
+[文档](https://luzhixing12345.github.io/CompileCore/)
 
 - 相关算法的使用方法
 - 相关算法的原理,代码实现思路,代码执行过程

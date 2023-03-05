@@ -1,6 +1,10 @@
 
 
-from .parser import *
+from ..parser import *
+import inspect
+
+calc_logger = Logger()
+# calc_logger.debug()
 
 class CalcTokenType(TokenType):
     
@@ -14,18 +18,22 @@ class CalcTokenType(TokenType):
     EOF           = 'EOF'
 
 
+class CalcError(ErrorCode):
+    
+    UNEXPECTED_TOKEN     = 'Unexpected token'
+    ID_NOT_FOUND         = 'Identifier not found'
+    DUPLICATE_ID         = 'Duplicate id found'
+    PARAMETERS_NOT_MATCH = 'parameter number not match'
+    INVALID_TYPE         = 'Invalid type'
+    TYPE_MISMATCH        = 'Type mismatch'
+    DIVISION_BY_ZERO     = 'Division by zero'
+    UNDEFINED_FUNCTION   = 'Undefined function'
+
 class CalcLexer(Lexer):
+    '''词法分析器'''
     
     def __init__(self, text):
         super().__init__(text)
-        
-    def peek(self) -> str:
-        '''查看下一个字符(不消耗)'''
-        peek_pos = self.pos+1
-        if peek_pos > len(self.text)-1:
-            return None
-        else:
-            return self.text[peek_pos]
 
     def skip_whitespace(self) -> None:
         '''跳过空格'''
@@ -41,10 +49,6 @@ class CalcLexer(Lexer):
         return int(result)
 
     def get_next_token(self):
-        """Lexical analyzer (also known as scanner or tokenizer)
-        This method is responsible for breaking a sentence
-        apart into tokens. One token at a time.
-        """
         while self.current_char is not None:
 
             if self.current_char.isspace():
@@ -52,16 +56,16 @@ class CalcLexer(Lexer):
                 continue
 
             if self.current_char.isdigit():
-                return Token(CalcTokenType.INTEGER, self.integer())
+                token = Token(CalcTokenType.INTEGER, self.integer(),self.line_number, self.column_number)
+                calc_logger.log(token)
+                return token
 
             try:
-                # get enum member by value, e.g.
-                # TokenType(';') --> TokenType.SEMI
-                token = Token(CalcTokenType(self.current_char),self.current_char)
+                token = Token(CalcTokenType(self.current_char),self.current_char, self.line_number, self.column_number)
                 self.advance()
+                calc_logger.log(token)
                 return token
             except ValueError:
-                # no enum member with value equal to self.current_char
                 self.error()
 
         
@@ -74,6 +78,23 @@ class CalcLexer(Lexer):
 #                                                                             #
 ###############################################################################
 
+
+class AST(object):
+    op: Token
+
+class BinOp(AST):
+    '''双目运算符'''
+    def __init__(self, left, op, right):
+        self.left = left
+        self.op:Token = op
+        self.right = right
+
+class UnaryOp(AST):
+    '''单目运算符'''
+    def __init__(self, op, expr):
+        self.op:Token = op
+        self.expr = expr
+
 class Num(AST):
     ''''''
     def __init__(self, token):
@@ -81,6 +102,7 @@ class Num(AST):
         self.value = token.value
 
 class CalcParser(Parser):
+    '''语法分析器'''
     
     def __init__(self, lexer):
         super().__init__(lexer)
@@ -91,6 +113,7 @@ class CalcParser(Parser):
         factor : INTEGER
                | LPAREN expr RPAREN
         """
+        # print(f'called {inspect.currentframe().f_code.co_name}')
         token:Token = self.current_token
         if token.type == CalcTokenType.INTEGER:
             self.eat(CalcTokenType.INTEGER)
@@ -107,10 +130,11 @@ class CalcParser(Parser):
             self.eat(CalcTokenType.PLUS)
             return UnaryOp(op=token, expr=self.factor())
         else:
-            self.error(ErrorCode.DUPLICATE_ID, token)
+            self.error(CalcError.UNEXPECTED_TOKEN, token)
 
     def term(self):
         """term : factor ((MUL | DIV) factor)*"""
+        calc_logger.log(f'called {inspect.currentframe().f_code.co_name}')
         node = self.factor()
 
         while self.current_token.type in (CalcTokenType.MUL, CalcTokenType.DIV):
@@ -130,6 +154,7 @@ class CalcParser(Parser):
         term   : factor ((MUL | DIV) factor)*
         factor : INTEGER | LPAREN expr RPAREN
         """
+        calc_logger.log(f'called {inspect.currentframe().f_code.co_name}')
         node = self.term()
 
         while self.current_token.type in (CalcTokenType.PLUS, CalcTokenType.MINUS):
@@ -140,7 +165,7 @@ class CalcParser(Parser):
                 self.eat(CalcTokenType.MINUS)
 
             node = BinOp(left=node, op=token, right=self.term())
-
+        
         return node
 
     def parse(self):
@@ -153,23 +178,12 @@ class CalcParser(Parser):
 #                                                                             #
 ###############################################################################
 
-class NodeVisitor(object):
-    def visit(self, node):
-        # type(node).__name__ = BinOp / Num
-        method_name = 'visit_' + type(node).__name__
-        
-        # equal to use : self.visit_BinOp(node) / self.visit_Num(node)
-        visitor = getattr(self, method_name, self.generic_visit)
-        return visitor(node)
 
-    def generic_visit(self, node):
-        raise Exception('No visit_{} method'.format(type(node).__name__))
-
-
-class Interpreter(NodeVisitor):
-    def __init__(self, parser):
-        self.parser = parser
-
+class CalcInterpreter(ASTVisitor):
+    
+    def __init__(self, parser) -> None:
+        super().__init__(parser)
+    
     def visit_BinOp(self, node:BinOp):
         if node.op.type == CalcTokenType.PLUS:
             return self.visit(node.left) + self.visit(node.right)
@@ -180,10 +194,10 @@ class Interpreter(NodeVisitor):
         elif node.op.type == CalcTokenType.DIV:
             return self.visit(node.left) // self.visit(node.right)
 
-    def visit_Num(self, node):
+    def visit_Num(self, node: Num):
         return node.value
     
-    def visit_UnaryOp(self, node):
+    def visit_UnaryOp(self, node: UnaryOp):
         op = node.op.type
         if op == CalcTokenType.PLUS:
             return +self.visit(node.expr)
@@ -201,7 +215,7 @@ def calculator():
         try:
             lexer = CalcLexer(text)
             parser = CalcParser(lexer)
-            interpreter = Interpreter(parser)
+            interpreter = CalcInterpreter(parser)
             result = interpreter.interpret()
             print(result)
         except Exception as e:

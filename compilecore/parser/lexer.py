@@ -12,7 +12,7 @@ class Lexer(object):
         self.column_number = 1
 
     def error(self) -> Error:
-        s = f"Lexer error on '{self.current_char}' line: {self.line_number} column: {self.column_number}"
+        s = f"Lexer error on '{self.current_char}' (line: {self.line_number} column: {self.column_number})"
         raise LexerError(message=s)
 
     def advance(self) -> str:

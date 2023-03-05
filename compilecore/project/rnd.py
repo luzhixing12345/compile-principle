@@ -2,7 +2,7 @@
 # RE - NFA - DFA
 # https://www.geeksforgeeks.org/converting-epsilon-nfa-to-dfa-using-python-and-graphviz/
 
-from .parser import *
+from ..parser import *
 
 class RETokenType(TokenType):
     
@@ -41,6 +41,8 @@ class RELexer(Lexer):
         
         return Token(RETokenType.EOF, None)
 
+class AST:
+    pass
 
 class CHAR_AST(AST):
     

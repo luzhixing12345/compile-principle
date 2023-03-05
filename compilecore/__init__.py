@@ -1,7 +1,7 @@
 
 
-from .base import Core
+from .base import Core, CFGCore
 from .ll1 import LL1
-from .calc import calculator
+from .project.calc import calculator
 from .parser import *
-from .rnd import regexp
+from .project.rnd import regexp

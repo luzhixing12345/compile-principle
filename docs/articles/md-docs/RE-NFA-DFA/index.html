@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        Document
+    </title>
+    <link rel='stylesheet' href=../../../css/prism.css /><link rel='stylesheet' href=../../../css/index.css />
+    <link rel="icon" href="https://raw.githubusercontent.com/learner-lu/picbed/master/logo.png">
+</head>
+
+<body class="light">
+    <div class='markdown-body'><h1>RE-NFA-DFA</h1><p>正则表达式是一种描述字符串匹配模式的语法，它可以用来检查、替换或提取符合条件的子串1。正则表达式有很多运算符，但是其中只有三种是基本的，分别是闭包（*），连接（.）和选择（|）12。其他的运算符都可以用这三种运算符来重写，比如：</p><ul><li>+号表示至少出现一次，等价于 x.x*</li></ul><ul><li>? 号表示最多出现一次，等价于 x|ε</li></ul><ul><li>{n} 表示恰好出现 n 次，等价于 n 个 x 连接</li></ul><ul><li>{n,} 表示至少出现 n 次，等价于 n 个 x 连接后跟 x*</li></ul><ul><li>{n,m} 表示出现 n 到 m 次，等价于 n 个 x 连接后跟 m-n 个 x|ε 连接</li></ul><ul><li>[a-z] 表示匹配一个小写字母，等价于 a|b|c|…|z</li></ul><ul><li>[^a-z] 表示匹配一个非小写字母，等价于 ε|(a|b|c|…|z)*</li></ul><ul><li>() 表示分组和优先级，可以用 . 和 | 来实现</li></ul><ul><li>^ 表示开头位置，可以用 (ε|x*) 来实现</li></ul><ul><li>$ 表示结尾位置，可以用 (x*|ε) 来实现</li></ul><p>所以正则表达式只支持闭包, 连接, 选择三种正则运算符就足够了。</p></div>
+    <div class="dir-tree"><ul><li><a href="../../md-docs/README" >README</a></li></ul><ul><li><a href="../../md-docs/上下文无关文法" >上下文无关文法</a></li></ul><ul><li><a href="../../md-docs/消除左递归" >消除左递归</a></li></ul><ul><li><a href="../../md-docs/first-follow-select" >first-follow-select</a></li></ul><ul><li><a href="../../md-docs/LL1" >LL1</a></li></ul><ul><li><a href="../../md-docs/RE-NFA-DFA" >RE-NFA-DFA</a></li></ul><ul><li><a href="../../md-docs/使用方法" >使用方法</a></li></ul></div>
+    <div class="zood"><a class="" href="https://github.com/luzhixing12345/zood" target="_blank">zood</a></div>
+    <script type="text/javascript" src="../../../js/next_front.js"></script><script>addLink("../../md-docs/LL1","../../md-docs/使用方法","ab")</script><script type="text/javascript" src="../../../js/change_mode.js"></script><script>addChangeModeButton("../../../img/sun.png","../../../img/moon.png")</script><script type="text/javascript" src="../../../js/copy_code.js"></script><script>addCodeCopy("../../../img/before_copy.png","../../../img/after_copy.png")</script><script type="text/javascript" src="../../../js/prism.js"></script><script type="text/javascript" src="../../../js/picture_preview.js"></script><script type="text/javascript" src="../../../js/check_box.js"></script>
+    <script type="module">
+        const codeBlocks = document.querySelectorAll('.language-mermaid');
+        codeBlocks.forEach(codeBlock => {
+            codeBlock.classList.remove('language-mermaid');
+            codeBlock.classList.add('mermaid');
+        });
+        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+        mermaid.initialize({ startOnLoad: true });
+    </script>
+</body>
+
+</html>
