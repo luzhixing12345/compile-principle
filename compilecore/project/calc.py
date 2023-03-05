@@ -17,7 +17,6 @@ class CalcTokenType(TokenType):
     INTEGER       = 'INTEGER'
     EOF           = 'EOF'
 
-
 class CalcError(ErrorCode):
     
     UNEXPECTED_TOKEN     = 'Unexpected token'
@@ -68,7 +67,7 @@ class CalcLexer(Lexer):
             except ValueError:
                 self.error()
 
-        
+        calc_logger.log('end')
         return Token(CalcTokenType.EOF, None)
 
 
@@ -107,21 +106,24 @@ class CalcParser(Parser):
     def __init__(self, lexer):
         super().__init__(lexer)
         self.current_token: Token
+        self.bracket_number = 0
 
     def factor(self):
         """
         factor : INTEGER
                | LPAREN expr RPAREN
         """
-        # print(f'called {inspect.currentframe().f_code.co_name}')
+        calc_logger.log(f'called {inspect.currentframe().f_code.co_name}')
         token:Token = self.current_token
         if token.type == CalcTokenType.INTEGER:
             self.eat(CalcTokenType.INTEGER)
             return Num(token)
         elif token.type == CalcTokenType.LPAREN:
             self.eat(CalcTokenType.LPAREN)
+            self.bracket_number += 1
             node = self.expr()
             self.eat(CalcTokenType.RPAREN)
+            self.bracket_number -= 1
             return node
         elif token.type == CalcTokenType.MINUS:
             self.eat(CalcTokenType.MINUS)
@@ -140,8 +142,10 @@ class CalcParser(Parser):
         while self.current_token.type in (CalcTokenType.MUL, CalcTokenType.DIV):
             token:Token = self.current_token
             if token.type == CalcTokenType.MUL:
+                calc_logger.log("eat mul in term")
                 self.eat(CalcTokenType.MUL)
             elif token.type == CalcTokenType.DIV:
+                calc_logger.log("eat div in term")
                 self.eat(CalcTokenType.DIV)
 
             node = BinOp(left=node, op=token, right=self.factor())
@@ -160,12 +164,20 @@ class CalcParser(Parser):
         while self.current_token.type in (CalcTokenType.PLUS, CalcTokenType.MINUS):
             token = self.current_token
             if token.type == CalcTokenType.PLUS:
+                calc_logger.log("eat plus in expr")
                 self.eat(CalcTokenType.PLUS)
             elif token.type == CalcTokenType.MINUS:
+                calc_logger.log("eat minus in expr")
                 self.eat(CalcTokenType.MINUS)
 
             node = BinOp(left=node, op=token, right=self.term())
         
+        if self.current_token.type == CalcTokenType.LPAREN:
+            self.error(CalcError.UNEXPECTED_TOKEN, self.current_token)
+        if self.current_token.type == CalcTokenType.RPAREN:
+            if self.bracket_number <= 0:
+                self.error(CalcError.UNEXPECTED_TOKEN,self.current_token)
+            
         return node
 
     def parse(self):
@@ -192,7 +204,10 @@ class CalcInterpreter(ASTVisitor):
         elif node.op.type == CalcTokenType.MUL:
             return self.visit(node.left) * self.visit(node.right)
         elif node.op.type == CalcTokenType.DIV:
-            return self.visit(node.left) // self.visit(node.right)
+            divsor = self.visit(node.right)
+            if divsor == 0:
+                self.error(CalcError.DIVISION_BY_ZERO,divsor)
+            return self.visit(node.left) // divsor
 
     def visit_Num(self, node: Num):
         return node.value
