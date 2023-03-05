@@ -22,7 +22,7 @@ ll1.LL1_construct("q+q*q")</code></pre><h2>要求</h2><p>基本的文法格式�
 L -&gt; ST
 T -&gt; ,ST | ε</code></pre><ul><li>默认<b>第一行第一个字符是文法的起始字符</b></li></ul><ul><li>空请使用 <code>ε</code> 字符</li></ul><ul><li>不支持 <code>S'</code>这种写法,不支持多字符的终结符/非终结符表示如 <code>id</code>,<code>expr</code>,请使用<b>单个字符</b>如 <code>P</code>,<code>a</code></li></ul><ul><li>多个产生式之间可以加空格, 但是产生式内部 <b>空格会被处理</b><p><code>S -&gt; A | B</code> 和 <code>S -&gt; A|B</code> 是等价的</p><p><code>S -&gt; A + B</code> 和 <code>S -&gt; A+B</code> 不等价, 其中的空格会被看作非终结符</p></li></ul><ul><li>箭头请使用 <code>-&gt;</code></li></ul><h2>示例</h2><h3>frist follow select</h3><pre><code class="language-python">import compilecore
 
-compilecore.CFGCore('./testfiles/g1.txt')</code></pre><pre><code class="language-bash">$ python main.py
+compilecore.CFGCore('./testfiles/g7.txt')</code></pre><pre><code class="language-bash">$ python main.py
 [E 存在直接左递归]: E -&gt; E+T
 [T 存在直接左递归]: T -&gt; T*F
 [起始符号]: E
