@@ -19,8 +19,8 @@ body {
 
 .markdown-body {
   margin-top: 2%;
-  margin-left: 25%;
-  margin-right: 25%;
+  margin-left: 20%;
+  margin-right: 20%;
   padding: 20px 50px;
   -ms-text-size-adjust: 100%;
   -webkit-text-size-adjust: 100%;
@@ -184,8 +184,7 @@ blockquote {
 }
 
 .markdown-body pre code {
-  display: inline;
-  max-width: auto;
+  max-width: 100%;
   padding: 0;
   margin: 0;
   overflow: visible;
@@ -215,7 +214,7 @@ blockquote {
 
 .markdown-body ul {
   margin-top: 0;
-  margin-bottom: 16px;
+  margin-bottom: 8px;
 }
 
 .markdown-body ol,
@@ -241,6 +240,10 @@ blockquote {
 
 .markdown-body li + li {
   margin-top: 0.25em;
+}
+
+.markdown-body ul ul li:first-child {
+  padding-top: 15px; /* 你希望的距离 */
 }
 
 .markdown-body table {
@@ -280,7 +283,7 @@ blockquote {
 }
 
 .markdown-dark table tr:nth-child(2n) {
-  background-color: #808080 ;
+  background-color: #808080;
   color: white;
 }
 
@@ -296,13 +299,14 @@ blockquote {
   line-height: 1.25;
 }
 
-.markdown-body > ul:has(input) {
+.markdown-body > ul > li:has(input) {
   padding-left: 0;
   margin-bottom: 0;
 }
 
-.markdown-body  ul:has(input) {
-    list-style-type: none;
+.markdown-body ul > li:has(input) > ul {
+  list-style-type: none;
+  padding-left: 8px;
 }
 
 .markdown-body img {
@@ -317,6 +321,32 @@ blockquote {
   position: relative;
 }
 
+.markdown-body pre #code_copy {
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  margin-top: -16px;
+  padding: 3px;
+  opacity: 0.9;
+  border: 1px solid rgba(149, 157, 165, 0.2);
+  border-radius: 5px;
+  z-index: 1;
+}
+
+.markdown-light pre #code_copy {
+  background-color: rgb(196, 196, 196);
+}
+
+.markdown-body pre #code_copy:hover {
+  background-color: #ffffff;
+  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+  border-radius: 5px;
+}
+
+.markdown-body ul li blockquote {
+  margin-top: 10px;
+}
+
 .changeMode {
   position: absolute;
   right: 50px;
@@ -327,33 +357,6 @@ blockquote {
   box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px,
     rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px,
     rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
-}
-
-.markdown-body pre #code_copy {
-  position: absolute;
-  right: 10px;
-  top: 50%;
-  margin-top: -16px;
-  padding: 3px;
-  opacity: 0.9;
-  border: 1px solid rgba(149, 157, 165, 0.2);
-  transition: all 0.5s;
-  border-radius: 5px;
-}
-
-.markdown-light pre #code_copy {
-  background-color: rgb(196, 196, 196);
-}
-
-.markdown-body pre #code_copy:hover {
-  transition: all 0.5s;
-  background-color: #ffffff;
-  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
-  border-radius: 5px;
-}
-
-.markdown-body pre #code_copy:active {
-  padding: 2px;
 }
 
 .markdown-light :not(pre) > code[class*="language-"],
@@ -550,9 +553,9 @@ pre[class*="language-"]::selection {
 
 .next-front {
   position: fixed;
-  right: 10%;
-  top: 40%;
-  width: 10%;
+  right: 6%;;
+  top: 60%;;
+  width: 10%;;
   /* white-space:nowrap; */
 }
 
@@ -563,7 +566,7 @@ pre[class*="language-"]::selection {
 .dir-tree {
   font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji;
   position: fixed;
-  left: 8%;
+  left: 6%;
   top: 15%;
   width: 10%;
   min-width: 100px;
@@ -590,6 +593,14 @@ pre[class*="language-"]::selection {
   /* box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px; */
 }
 
+.dir-tree ul li a {
+  display: inline-block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .search-bar::-webkit-scrollbar {
   display: none; /* Chrome Safari */
 }
@@ -599,7 +610,7 @@ pre[class*="language-"]::selection {
   display: flex;
   font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji;
   position: fixed;
-  left: 8%;
+  left: 6%;
   top: 8%;
   width: 10%;
   min-width: 100px;
@@ -694,10 +705,10 @@ pre[class*="language-"]::selection {
 }
 
 .link-active-dark {
-    font-weight: bold !important;
-    border-bottom: 2px solid #f3f3f3;
-    padding-bottom: 2px;
-  }
+  font-weight: bold !important;
+  border-bottom: 2px solid #f3f3f3;
+  padding-bottom: 2px;
+}
 
 /* 图片下的文字的样式 */
 
@@ -835,4 +846,57 @@ pre[class*="language-"]::selection {
   opacity: 0.5;
   /* transition: all 0.5s; */
   /* border-radius: 5px; */
+}
+
+.header-navigator {
+  display: none;
+  position: fixed;
+  width: 15%;
+  left: 83%;
+  top: 10%;
+  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji;
+  font-size: 18px;
+  letter-spacing: 0.02em;
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE 10+ */
+  text-overflow: ellipsis; /*  过长文字省略号 */
+  white-space: nowrap; /*禁止文字折行*/
+  list-style: none;
+  max-height: 50%;
+  overflow: auto;
+}
+
+.header-navigator::-webkit-scrollbar {
+  display: none; /* Chrome Safari */
+}
+
+.header-navigator a {
+  text-decoration: none;
+}
+
+.header-navigator a:hover {
+  font-weight: bolder;
+}
+
+.header-navigator ul {
+  font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Helvetica, Arial, sans-serif, Apple Color Emoji, Segoe UI Emoji;
+  font-size: 14px;
+  letter-spacing: 0.02em;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  margin-left: -10px;
+  list-style: none;
+  position: relative;
+}
+
+.header-navigator ul ul {
+  margin-left: -20px;
+}
+
+.header-navigator a {
+  display: inline-block;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }

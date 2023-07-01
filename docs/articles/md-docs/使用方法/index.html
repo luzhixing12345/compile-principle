@@ -13,14 +13,14 @@
 </head>
 
 <body class="light">
-    <div class='markdown-body'><h1>使用方法</h1><p>笔者使用python编写了一个库 <a href="https://github.com/luzhixing12345/CompileCore" target="_blank">compilecore</a></p><p>你可以非常方便的计算first follow select, 以及消除左递归等等编译原理算法</p><p>您可以在 <code>testfiles/</code> 找到一些测试用的文件, 或者编写您的文法文件并作为路径传入</p><p>你只需要引用这个库的CFGCore(上下文无关文法的核心组件)并传入一个文法文件即可</p><pre><code class="language-python">import compilecore
+    <div class="header-navigator"><ul><li><a href="#h1-0">使用方法</a><ul><li><a href="#h2-1">要求</a></li></ul><ul><li><a href="#h2-2">示例</a><ul><li><a href="#h3-3">frist follow select</a></li></ul><ul><li><a href="#h3-4">LL1</a></li></ul></li></ul></li></ul></div><div class='markdown-body'><h1 id="h1-0">使用方法</h1><p>笔者使用python编写了一个库 <a href="https://github.com/luzhixing12345/CompileCore" target="_blank">compilecore</a></p><p>你可以非常方便的计算first follow select, 以及消除左递归等等编译原理算法</p><p>您可以在 <code>testfiles/</code> 找到一些测试用的文件, 或者编写您的文法文件并作为路径传入</p><p>你只需要引用这个库的CFGCore(上下文无关文法的核心组件)并传入一个文法文件即可</p><pre><code class="language-python">import compilecore
 
 compilecore.CFGCore('./testfiles/g1.txt')</code></pre><p>如果您希望解析LL1文法并提供解析树, 引入类 <code>LL1</code> 并调用<code>LL1_construct</code>即可</p><pre><code class="language-python">import compilecore
 
 ll1 = compilecore.LL1('./testfiles/g7.txt')
-ll1.LL1_construct("q+q*q")</code></pre><h2>要求</h2><p>基本的文法格式如下</p><pre><code class="language-txt">S -&gt; (L) | a
+ll1.LL1_construct("q+q*q")</code></pre><h2 id="h2-1">要求</h2><p>基本的文法格式如下</p><pre><code class="language-txt">S -&gt; (L) | a
 L -&gt; ST
-T -&gt; ,ST | ε</code></pre><ul><li>默认<b>第一行第一个字符是文法的起始字符</b></li></ul><ul><li>空请使用 <code>ε</code> 字符</li></ul><ul><li>不支持 <code>S'</code>这种写法,不支持多字符的终结符/非终结符表示如 <code>id</code>,<code>expr</code>,请使用<b>单个字符</b>如 <code>P</code>,<code>a</code></li></ul><ul><li>多个产生式之间可以加空格, 但是产生式内部 <b>空格会被处理</b><p><code>S -&gt; A | B</code> 和 <code>S -&gt; A|B</code> 是等价的</p><p><code>S -&gt; A + B</code> 和 <code>S -&gt; A+B</code> 不等价, 其中的空格会被看作非终结符</p></li></ul><ul><li>箭头请使用 <code>-&gt;</code></li></ul><h2>示例</h2><h3>frist follow select</h3><pre><code class="language-python">import compilecore
+T -&gt; ,ST | ε</code></pre><ul><li>默认<b>第一行第一个字符是文法的起始字符</b></li></ul><ul><li>空请使用 <code>ε</code> 字符</li></ul><ul><li>不支持 <code>S'</code>这种写法,不支持多字符的终结符/非终结符表示如 <code>id</code>,<code>expr</code>,请使用<b>单个字符</b>如 <code>P</code>,<code>a</code></li></ul><ul><li>多个产生式之间可以加空格, 但是产生式内部 <b>空格会被处理</b><p><code>S -&gt; A | B</code> 和 <code>S -&gt; A|B</code> 是等价的</p><p><code>S -&gt; A + B</code> 和 <code>S -&gt; A+B</code> 不等价, 其中的空格会被看作非终结符</p></li></ul><ul><li>箭头请使用 <code>-&gt;</code></li></ul><h2 id="h2-2">示例</h2><h3 id="h3-3">frist follow select</h3><pre><code class="language-python">import compilecore
 
 compilecore.CFGCore('./testfiles/g7.txt')</code></pre><pre><code class="language-bash">$ python main.py
 [E 存在直接左递归]: E -&gt; E+T
@@ -61,7 +61,7 @@ compilecore.CFGCore('./testfiles/g7.txt')</code></pre><pre><code class="language
   A -&gt; -TA
   B -&gt; ε
   B -&gt; *FB
-  B -&gt; /FB</code></pre><h3>LL1</h3><pre><code class="language-python">import compilecore
+  B -&gt; /FB</code></pre><h3 id="h3-4">LL1</h3><pre><code class="language-python">import compilecore
 
 ll1 = compilecore.LL1('./testfiles/g7.txt')
 ll1.LL1_construct("q+q*q")</code></pre><p>注意, 这里的解析是消除左递归之后的</p><p>如果您的文法不是LL1文法,则会在出现冲突之后提示您手动消解</p><pre><code class="language-bash">$ python main.py
@@ -133,18 +133,9 @@ T|  T -&gt; FB                                                               T -
        $                A$                A -&gt; ε
        $                 $                  匹配
 LL1分析结束</code></pre></div>
-    <div class="dir-tree"><ul><li><a href="../../md-docs/README" >README</a></li></ul><ul><li><a href="../../md-docs/上下文无关文法" >上下文无关文法</a></li></ul><ul><li><a href="../../md-docs/消除左递归" >消除左递归</a></li></ul><ul><li><a href="../../md-docs/first-follow-select" >first-follow-select</a></li></ul><ul><li><a href="../../md-docs/LL1" >LL1</a></li></ul><ul><li><a href="../../md-docs/RE-NFA-DFA" >RE-NFA-DFA</a></li></ul><ul><li><a href="../../md-docs/使用方法" >使用方法</a></li></ul></div>
+    <div class="dir-tree"><ul><li><a href="../../md-docs/README" >README</a></li></ul><ul><li><a href="../../md-docs/上下文无关文法" >上下文无关文法</a></li></ul><ul><li><a href="../../md-docs/消除左递归" >消除左递归</a></li></ul><ul><li><a href="../../md-docs/first-follow-select" >first-follow-select</a></li></ul><ul><li><a href="../../md-docs/LL1" >LL1</a></li></ul><ul><li><a href="../../md-docs/RE-NFA-DFA" >RE-NFA-DFA</a></li></ul><ul><li><a href="../../md-docs/使用方法" >使用方法</a></li></ul><ul><li><a href="../../编译原理/第一章-引论" >编译原理</a><ul><li><a href="../../编译原理/第一章-引论" >第一章-引论</a></li></ul></li></ul></div>
     <div class="zood"><a class="" href="https://github.com/luzhixing12345/zood" target="_blank">zood</a></div>
-    <script type="text/javascript" src="../../../js/next_front.js"></script><script>addLink("../../md-docs/RE-NFA-DFA",".","ab")</script><script type="text/javascript" src="../../../js/change_mode.js"></script><script>addChangeModeButton("../../../img/sun.png","../../../img/moon.png")</script><script type="text/javascript" src="../../../js/copy_code.js"></script><script>addCodeCopy("../../../img/before_copy.png","../../../img/after_copy.png")</script><script type="text/javascript" src="../../../js/prism.js"></script><script type="text/javascript" src="../../../js/picture_preview.js"></script><script type="text/javascript" src="../../../js/check_box.js"></script>
-    <script type="module">
-        const codeBlocks = document.querySelectorAll('.language-mermaid');
-        codeBlocks.forEach(codeBlock => {
-            codeBlock.classList.remove('language-mermaid');
-            codeBlock.classList.add('mermaid');
-        });
-        import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
-        mermaid.initialize({ startOnLoad: true });
-    </script>
+    <script type="text/javascript" src="../../../js/next_front.js"></script><script>addLink("../../md-docs/RE-NFA-DFA","../../编译原理/第一章-引论","ab")</script><script type="text/javascript" src="../../../js/change_mode.js"></script><script>addChangeModeButton("../../../img/sun.png","../../../img/moon.png")</script><script type="text/javascript" src="../../../js/copy_code.js"></script><script>addCodeCopy("../../../img/before_copy.png","../../../img/after_copy.png")</script><script type="text/javascript" src="../../../js/navigator.js"></script><script type="text/javascript" src="../../../js/prism.js"></script><script type="text/javascript" src="../../../js/picture_preview.js"></script><script type="text/javascript" src="../../../js/check_box.js"></script>
 </body>
 
 </html>

@@ -15,6 +15,13 @@ function changeToLight(body, markdown_part, box, change_article_boxes) {
     for (var i = 0; i < allLinks.length; i++) {
         allLinks[i].style.color = 'black';
     }
+
+    var navigator = document.querySelector('.header-navigator');
+    var allLinks = navigator.querySelectorAll('a');
+    for (var i = 0; i < allLinks.length; i++) {
+        allLinks[i].style.color = 'black';
+    }
+
     var activate_links = dirTree.querySelectorAll('.link-active-dark');
     for (var activate_link of activate_links) {
         activate_link.className = 'link-active';
@@ -40,6 +47,13 @@ function changeToDark(body, markdown_part, box, change_article_boxes) {
     for (var i = 0; i < allLinks.length; i++) {
         allLinks[i].style.color = 'white';
     }
+
+    var navigator = document.querySelector('.header-navigator');
+    var allLinks = navigator.querySelectorAll('a');
+    for (var i = 0; i < allLinks.length; i++) {
+        allLinks[i].style.color = 'white';
+    }
+
     var activate_links = dirTree.querySelectorAll('.link-active');
     for (var activate_link of activate_links) {
         activate_link.className = 'link-active-dark';

@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        Document
+    </title>
+    <link rel='stylesheet' href=../../../css/prism.css /><link rel='stylesheet' href=../../../css/index.css />
+    <link rel="icon" href="https://raw.githubusercontent.com/learner-lu/picbed/master/logo.png">
+</head>
+
+<body class="light">
+    <div class="header-navigator"><ul><li><a href="#h1-0">第一章-引论</a><ul><li><a href="#h2-1">编译器的结构</a></li></ul></li></ul></div><div class='markdown-body'><h1 id="h1-0">第一章-引论</h1><blockquote><p>本节内容是关于编译原理的整体概览</p></blockquote><p>只有很少的读者将回去构建甚至维护一个主流程序设计语言的编译器, <b>但是和编译器相关的模型,理论和算法可以被应用到软件设计和开发中出现的各种各样的问题上</b>. 因此我们会关注哪些在设计一个语言处理器时常常会遇到的问题, 而不考虑具体的源语言和目标机器究竟是什么</p><p>简单来说, 编译器是一个程序, 它可以阅读某一种语言便携的程序, 并把该程序翻译成一个等价的, 用另一种语言编写的程序. 编译器的重要任务之一就是报告它在翻译过程中发现的源程序中的错误</p><p>解释器是另一种常见的语言处理器, 它并不通过翻译的方式生成目标程序, 从用户的角度来看, 解释器直接利用用户提供的输入执行源程序中的指定操作</p><p>再把用户输入映射成为输出的过程中, 编译器产生的机器语言目标程序通常要比一个解释器快的多, 然而解释器的错误诊断效果通常要比编译器更好, 因为它逐个语句的执行源程序</p><blockquote><p>java 是一个非常经典的编译+解释的过程, java 源程序首先被编译为一个称为"字节码"的中间表示形式, 然后由一个虚拟机对得到的字节码加以解释执行. 这样的好处之一是在一台机器上编译得到的字节码可以在另一台机器上解释执行. 为了更快的完成输入到输出的处理, 特殊的处理方法比如即时编译器(just in time, JIT)</p></blockquote><h2 id="h2-1">编译器的结构</h2><p>分析(analysis)部分把源程序分解成为多个组成要素,并在这些要素之上加上语法结构.然后,它使用这个结构来创建该源程序的一个中间表示.如果分析部分检查出源程序没有按照正确的语法构成,或者语义上不一致,它就必须提供有用的信息,使得用户可以按此进行改正.分析部分还会收集有关源程序的信息,并把信息存放在一个称为符号表( symbol table)的数据结构中.符号表将和中间表示形式一起传送给综合部分.</p><p>综合(synthesis)部分根据中间表示和符号表中的信息来构造用户期待的目标程序.<b>分析部分经常被称为编译器的前端(front end),而综合部分称为后端(back end).</b></p><p>下图是一个非常经典的编译执行顺序, 读者应该已经看过无数次了</p><p><img src="https://raw.githubusercontent.com/learner-lu/picbed/master/20230701231646.png" alt="20230701231646"></p><p>有些编译器在前端和后端之间还有一个机器无关的<b>优化步骤</b>, 这个优化步骤的目的是在中间表示之上进行转换, 以便后端程序能够生成更好的目标程序</p></div>
+    <div class="dir-tree"><ul><li><a href="../../md-docs/README" >README</a></li></ul><ul><li><a href="../../md-docs/上下文无关文法" >上下文无关文法</a></li></ul><ul><li><a href="../../md-docs/消除左递归" >消除左递归</a></li></ul><ul><li><a href="../../md-docs/first-follow-select" >first-follow-select</a></li></ul><ul><li><a href="../../md-docs/LL1" >LL1</a></li></ul><ul><li><a href="../../md-docs/RE-NFA-DFA" >RE-NFA-DFA</a></li></ul><ul><li><a href="../../md-docs/使用方法" >使用方法</a></li></ul><ul><li><a href="../../编译原理/第一章-引论" >编译原理</a><ul><li><a href="../../编译原理/第一章-引论" >第一章-引论</a></li></ul></li></ul></div>
+    <div class="zood"><a class="" href="https://github.com/luzhixing12345/zood" target="_blank">zood</a></div>
+    <script type="text/javascript" src="../../../js/next_front.js"></script><script>addLink("../../md-docs/使用方法",".","ab")</script><script type="text/javascript" src="../../../js/change_mode.js"></script><script>addChangeModeButton("../../../img/sun.png","../../../img/moon.png")</script><script type="text/javascript" src="../../../js/copy_code.js"></script><script>addCodeCopy("../../../img/before_copy.png","../../../img/after_copy.png")</script><script type="text/javascript" src="../../../js/navigator.js"></script><script type="text/javascript" src="../../../js/prism.js"></script><script type="text/javascript" src="../../../js/picture_preview.js"></script><script type="text/javascript" src="../../../js/check_box.js"></script>
+</body>
+
+</html>
