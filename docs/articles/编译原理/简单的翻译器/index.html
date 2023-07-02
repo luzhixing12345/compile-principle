@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>
+        Document
+    </title>
+    <link rel='stylesheet' href=../../../css/prism.css /><link rel='stylesheet' href=../../../css/index.css />
+    <link rel="icon" href="https://raw.githubusercontent.com/learner-lu/picbed/master/logo.png">
+</head>
+
+<body class="light">
+    <div class="header-navigator"><ul><li><a href="#h1-0">简单的翻译器</a><ul><li><a href="#h2-1">上下文无关文法</a><ul><li><a href="#h3-2">什么是终结符?</a></li></ul><ul><li><a href="#h3-3">什么是非终结符?</a></li></ul><ul><li><a href="#h3-4">为什么叫上下文无关文法?</a></li></ul></li></ul><ul><li><a href="#h2-5">最左推导 最右推导</a></li></ul><ul><li><a href="#h2-6">构建语法树</a></li></ul><ul><li><a href="#h2-7">二义性</a></li></ul><ul><li><a href="#h2-8">二义性的判断和消除</a></li></ul><ul><li><a href="#h2-9">参考</a></li></ul></li></ul></div><div class='markdown-body'><h1 id="h1-0">简单的翻译器</h1><blockquote><p>本节依然是一个对于后文编译技术的总体介绍</p></blockquote><p>起点不要太高, 我们首先完成一个能够将<b>中缀算术表达式转换为后缀表达式</b>的语法制导翻译小程序, 然后我们尝试扩展这个翻译器使其可以翻译一些程序片段</p><p>后缀表达式是一种将运算符置于运算分量之后的表示方法.例如,表达式 <code>9-5+2</code> 的后缀形式是 <code>95-2+</code>. 将表达式翻译为后缀形式的过程可以充分演示语法分析技术,同时这个翻译过程又很简单. 我们先做一些简化</p><ol start="1"><li>输入仅有数字 + -</li></ol><ol start="2"><li>数字只考虑单个字符, 即 0-9</li></ol><h2 id="h2-1">上下文无关文法</h2><p>编译器以简洁的方式指定编程语法,简称文法. 上下文无关文法由 <b>终结符</b> <b>非终结符</b> <b>开始符号</b> <b>产生式</b>组成</p><p>英文释义为context free grammar, 简称CFG</p><h3 id="h3-2">什么是终结符?</h3><p>终结符可以理解为不可再分的最小结构,可以直接表示的字符,比如 + - , ( 等字符.</p><p>C++代码中每一个单词都是终结符, 包括但不限于 ( ) + if else for ; sum main等,</p><h3 id="h3-3">什么是非终结符?</h3><p>非终结符可以理解为一个组合情况,相当于一个小函数.非终结符可以由终结符组成,也可以由其他非终结符组成</p><p>常见的上下文无关文法一般的表示为:</p><pre><code class="language-txt">expression -&gt; expression + term
+expression -&gt; expression - term
+      term -&gt; term
+      term -&gt; term * factor
+      term -&gt; factor
+    factor -&gt; (expression)
+    factor -&gt; id</code></pre><p>这里的 → 代表产生/推导,即左侧可以推导出右侧. <b>所有左侧的一定都是非终结符</b>,右侧的 <code>id + - * /</code> 是终结符,从这个例子就可以看出非终结符可以由终结符和非终结符构成,有点类似于递归调用的感觉,终结符就像是递归的出口/递归的终止条件</p><p>上面这个例子就是四则运算的上下文无关文法, 你可以在后面的文章中找到如何为此文法编写代码以实现四则运算(带括号)的表达式计算</p><h3 id="h3-4">为什么叫上下文无关文法?</h3><p>上下文无关体现在根据一个产生式 V-&gta|b 我始终可以推出 a|b两种情况,与上下文无关.</p><blockquote><p><a href="https://www.zhihu.com/question/21833944/answer/307309365" target="_blank">如何理解上下文无关文法</a></p></blockquote><p>举一个上下文无关文法的例子</p><ul><li>Sent -&gt S V O</li></ul><ul><li>S -&gt 人 | 天</li></ul><ul><li>V -&gt 吃 | 下</li></ul><ul><li>O -&gt 雨 | 雪 | 饭 | 肉</li></ul><p>其中英文字母都是非终结符(SVO 分别表示主谓宾),汉字都是终结符.这个文法可以生成如下句子(共 2<i>2</i>4=16 种组合, 人吃饭,天下雨,人吃肉,天下雪,人下雪,天下饭,天吃肉,……)</p><p>可以看到,其中有一些搭配在语义上是不恰当的,例如"天吃肉".其(最左)推导过程为:</p><p>Sent -&gt SVO -&gt 天VO -&gt 天吃O -&gt 天吃肉</p><p>但是上下文无关文法里,<b>因为有"V -&gt 吃 | 下"这样一条产生式,V 就永远都可以推出"吃"这个词,它并不在乎应用"V -&gt 吃 | 下"这个产生式进行推导时 V 所在的上下文</b>(在这个例子里,就是"天VO"中 V 左右两边的字符串"天"和"O").事实上,在 V 推出"吃"这一步,它的左边是"天"这个词,而"天"和"吃"不搭配,导致最后的句子读起来很奇怪</p><p>对于上下文有关文法:</p><ul><li>Sent -&gt S V O</li></ul><ul><li>S -&gt 人 | 天</li></ul><ul><li>人V -&gt 人吃</li></ul><ul><li>天V -&gt 天下</li></ul><ul><li>下O -&gt 下雨 | 下雪</li></ul><ul><li>吃O -&gt 吃饭 | 吃肉</li></ul><p>而<b>上下文有关文法就是左侧不仅只有一个非终结符,还可能有其他终结符/非终结符参与上下文的影响</b>,相当于加了一些约束条件.</p><p>可以看到,这里对 V 的推导过程施加了约束:虽然 V 还是能推出"吃"和"下"两个词,但是仅仅当 V 左边是"人"时,才允许它推导出"吃";而当 V 左边是"天"时,允许它推导出"下".<b>这样通过上下文的约束,就保证了主谓搭配的一致性.类似地,包含 O 的产生式也约束了动宾搭配的一致性.这样一来,这个语言包含的句子就只有｛人吃饭,天下雨,人吃肉,天下雪｝这四条</b>,都是语义上合理的.以"人吃饭"为例,推导过程为:Sent -&gt SVO -&gt 人VO -&gt 人吃O -&gt 人吃饭</p><hr><p>对于上下文无关文法有一些默认的规定:</p><ul><li>小写字母如 a b c,运算符号如 + *,标点符号如 , ; 数字默认是终结符</li></ul><ul><li>大写字符 A B C, 小写的单词如 expr,stmt为非终结符</li></ul><ul><li>如果需要构造非终结符优先考虑使用 E T F或者相同字符的 S' T'等</li></ul><ul><li>S 默认是开始符号</li></ul><p>比如写一个文法 <code>E -&gt; bTeS</code> 那么这里的 <code>E T S</code> 大写字符默认应该表示的是一个非终结符, <code>b e</code> 则表示对应的终结符</p><h2 id="h2-5">最左推导 最右推导</h2><p><b>最左推导</b>: 始终选择每个句型中的最左非终结符号</p><p><b>最右推导</b>: 始终选择每个句型中的最右非终结符号</p><p>例1: S -&gt +SS | *SS | a</p><p>对于字符串 <code>+*aaa</code> , 推导过程如下</p><pre><code class="language-txt">最左推导    最右推导
+S-&gt;+SS      S-&gt;+SS
+S-&gt;+*SSS    S-&gt;+Sa
+S-&gt;+*aSS    S-&gt;+*SSa
+S-&gt;+*aaS    S-&gt;+*Saa
+S-&gt;+*aaa    S-&gt;+*aaa</code></pre><p>例2: S -&gt S+S | SS | (S) | S* | a</p><p>对于字符串 <code>(a+a)*a</code> , 推导过程如下</p><pre><code class="language-txt">最左推导        最右推导
+S-&gt;SS           S-&gt;SS
+S-&gt;S*S          S-&gt;Sa
+S-&gt;(S)*S        S-&gt;S*a
+S-&gt;(S+S)*S      S-&gt;(S)*a
+S-&gt;(a+S)*S      S-&gt;(S+S)*a
+S-&gt;(a+a)*S      S-&gt;(S+a)*a
+S-&gt;(a+a)*a      S-&gt;(a+a)*a</code></pre><p>但是这里有一个问题</p><p>这里的最左/最右推导其实是我们<b>用眼睛直接看出来的</b>,先观察要推到的结果串的大致格式,然后从S开始推测可能的匹配方式,相当于你是站在了上帝视角拥有了头脑演算回退的方式进行分析,从而直接写出了最后的推导式</p><p>但实际上如果是想要编程实现这个问题可并不容易,比如例2中的最左推导的第二步,如果我没有事先注意到后面有一个*那么我很可能就会直接选择S-&gt(S)S,这样推导下去就会失败,需要再重新回退,选择下一个匹配方式.</p><p>实际上出现这个问题的原因在于<b>文法出现了左递归</b>,我们会在下一节中优化这个文法以消除左递归</p><h2 id="h2-6">构建语法树</h2><p>构建语法树的过程就是不断推导非终结符,最后得到的终结符组成目标串的过程</p><p>例3: S -&gt 0S1|01</p><p>对于字符串 <code>000111</code></p><pre><code class="language-mermaid">graph TD;
+    A((S))--&gt;B1((0));
+    A--&gt;B2((S));
+    A--&gt;B3((1));
+    B2--&gt;C1((0));
+    B2--&gt;C2((S));
+    B2--&gt;C3((1))
+    C2--&gt;D1((01))</code></pre><p>例4: S -&gt S+S | SS | (S) | S* | a</p><p>对于字符串 <code>(a+a)*a</code></p><pre><code class="language-mermaid">graph TD;
+    A((S)) --&gt; B1((S))
+    A--&gt;B2((S))
+    B1--&gt;C1((S))
+    B1--&gt;C2((*))
+    B2--&gt;C3((a))
+    C1--&gt;D1(("("))
+    C1--&gt;D2((S))
+    C1--&gt;D3((")"))
+    D2--&gt;E1((S))
+    D2--&gt;E2((+))
+    D2--&gt;E3((S))
+    E1--&gt;F1((a))
+    E3--&gt;F2((a))</code></pre><p>语法树,也称语法分析树/分析树,是用来推导可表达的树状结构,和推导所用的顺序无关(最左最右或其他)</p><ul><li>树中的每个节点代表非终结符</li></ul><ul><li>每个叶子节点代表终结符</li></ul><ul><li>每一步推导代表如何从双亲节点生成它的直接孩子节点</li></ul><p>以上两种情况就是一棵完整的语法树的构建方式,既是最左推导也是最右推导,与顺序无关.</p><p>但有的时候你可能会发现不止有一种语法树的构建方式</p><p>例5 : S -&gt S(S)S|ε</p><p>对于字符串 <code>(()())</code>, 我们可以先展开到这一步,此时的语法树如下</p><p><img src="https://raw.githubusercontent.com/learner-lu/picbed/master/20220425084242.png" alt=""></p><p>这时我们发现,最下层的左右两个 S 都可以一个展开为一个括号,另一个变为ε,这样就得到了两棵不同的语法树</p><table><tr><th>语法树1</th><th>语法树2</th></tr><tr><td style="text-align:center">                <img src="https://raw.githubusercontent.com/learner-lu/picbed/master/20220425100630.png" alt=""></td><td style="text-align:center">                <img src="https://raw.githubusercontent.com/learner-lu/picbed/master/20220425101236.png" alt=""></td></tr></table><p><b>两棵不同的语法树都是正确的</b>,但是语法树并不唯一意味着什么呢?</p><h2 id="h2-7">二义性</h2><p>文法的二义性的定义是: 文法 G 对同一句子产生不止一棵分析树,则称 G 是二义的</p><p>例6:</p><blockquote><p>E -&gt id | E+E | E*E</p></blockquote><p>对于这个文法,如果需要匹配的字符串为 <code>3+4*5</code>,有两种方式生成语法树</p><table><tr><th>语法树1</th><th>语法树2</th></tr><tr><td style="text-align:center">                <img src="https://raw.githubusercontent.com/learner-lu/picbed/master/20220425095336.png" alt=""></td><td style="text-align:center">                <img src="https://raw.githubusercontent.com/learner-lu/picbed/master/20220425095600.png" alt=""></td></tr></table><p>例7:</p><blockquote><p>S -&gt if a B | if a B else B | C</p></blockquote><p>对于这个文法,如果需要匹配的字符串为 <code>if (a==1) if (b==2) X else Y</code></p><table><tr><th>语法树1</th><th>语法树2</th></tr><tr><td style="text-align:center">                <img src="https://raw.githubusercontent.com/learner-lu/picbed/master/20220425101808.png" alt=""></td><td style="text-align:center">                <img src="https://raw.githubusercontent.com/learner-lu/picbed/master/20220425102008.png" alt=""></td></tr></table><p>那么二义性会造成什么问题呢? 分析树的含义取决于树的后序遍历,对于例6中的 <code>3+4*5</code>,树1的含义为 <code>3+(4*5)</code>,而树2的含义为<code>(3+4)*5</code>,这显然是两种不同的算数运算结果</p><p>对于例7,树1中的else与第二个if结合,树2中的else和第一个if结合,相信熟悉编程的同学一定遇到过ifelse错误匹配的错误执行结果</p><p>那么显然我们并不希望一个文法有二义性,我们希望通过此文法生成的语法树总是确定的,唯一的.如果一个文法有二义性那么可能不同的编译器在做处理的时候会有不同的结果,这显然是我们不希望看到的</p><h2 id="h2-8">二义性的判断和消除</h2><p>如何判断一个文法是否具有二义性?</p><p>答: <b>目前没有通用的办法</b></p><p>如果想要证明一个文法具有二义性,那么我们只要举出一个反例即可. 比如你想要证明能被3整除的一定能被2整除,你可以举例9,不成立,所以证明为假.</p><p>如果想要证明一个文法不具有二义性,那么相当于想要证明任意一大于5的整数都可以写成三个质数之和(哥德巴赫猜想),你需要一套非常完善的数学推导来证明.</p><p>非常遗憾目前并没有一个通用的算法可以用来判断一个文法是否具有二义性.</p><p>目前的解决办法为: 观察这个文法,如果能找到一个例子可以构建出两个不同的语法树,那么这个文法一定是有二义性的</p><p>但是这种判断方式存在两个问题:</p><ul><li>我如何去找到这个例子?<p>之前提到的例2的文法,如果对于它题目中给出的例子,只有一棵唯一的语法树.</p><blockquote><p>S -&gt S+S | SS | (S) | S* | a , string:(a+a)*a</p></blockquote><p>但是如果对于例子 <code>aa+aa</code>,相信你可以构建出不同的语法树.</p><p>也就是说对于同一文法,有的句子会有多课语法树,有的句子只有一棵语法树,这就需要我们头脑机灵一些,不断尝试,寻找一些可能会出现问题的字符串组合</p><p>寻找的例子一定是可以通过该文法推导出来的,我们要关注的是可以通过几种方式推导</p></li></ul><ul><li>我没找到这个例子也不一定是没有二义性,也可能是我例子寻找的不太好啊?<p>确实,这个问题确实.</p><p>其实我上面介绍的两个例子,例6例7就是最为常见的可能造成二义性的两个方面(运算符优先级,替换展开不明/else悬挂)我们可以从这两个角度来思考检查文法,来尝试创造可能有二义性的句子</p><p>归根结底我们无法直接证明一个文法有无二义性,只能凭借直觉猜测和使用例子尝试</p><ul><li>如果文法逻辑直观明确, 比如例3的<code>S-&gt;0S1|01</code>,这明显就是推导一个 0^n1^n 的字符串,显然是没有二义性的</li></ul><ul><li>如果文法比较复杂,+*等多种运算符同时出现在相同的位置上,且前后可推导语句差距不大,比如<code>S+S</code>,<code>S*S</code>这种,你可能就需要考虑构造一个 <code>1+2*3</code>语句会不会造成二义性</li></ul><ul><li>如果题目给你一个例子让你说明文法的二义性,那么只需要构造语法树,观察可能在不同的位置进行推导展开,构造出两个语法树即可证明</li></ul></li></ul><p>对于二义性文法如何消除二义性?</p><p>答: <b>没有</b></p><p>正如我们无法判断是否有二义性,也就不存在可以消除二义性的办法,要不然岂不是直接就互通了,解决一个两个就都解决了~</p><p>目前消除二义性的办法仍然是肉眼观察,使用等价的文法重写</p><ul><li>对于例6 <code>E -&gt; id | E+E | E*E</code> ,该文法造成二义性的原因是<code>+ *</code>的计算次序,现在这两个推导是同等级的,那么我们的等价文法就需要提高 <code>*</code>的优先级<p>文法可改写为等价文法:</p><pre><code class="language-txt">E -&gt; E+T|T
+T -&gt; T*F|F
+F -&gt; id</code></pre><p>这样做的效果是优先考虑 <code>+</code> ,这样整个式子会被优先拆解为使用+分割的几个句子,例如 <code>4*7+4*2+1</code>,该文法会将其分解为 <code>4*7</code> <code>+</code> <code>4*2+1</code>,这里的前半部分的 <code>4*7</code> 就被带入T进行下一级的乘法拆解了,后半部分的分解同理,会被分解为 <code>4*2</code> <code>+</code> <code>1</code>.</p><p>正是因为乘法的优先级高,所以我们将加法优先处理,这样分解到下层的就是乘法,在后续遍历中就可以优先计算,得到的结果返回上层再做加法运算.</p></li></ul><ul><li>对于例7 <code>S -&gt; if a B | if a B else B | C</code><p>等效文法为:</p><pre><code class="language-txt">S  -&gt; S1|S2
+S1 -&gt; if a S1 else S2 | C
+S1 -&gt; if a S1 else S2 | if a else S</code></pre><p>这种文法的改写不是很好解释,见过,记住就好.</p></li></ul><ul><li>对于例5: S -&gt S(S)S|ε<p>等效文法为: S -&gt S(S) | ε 或者 S-&gt (S)S|ε</p><p>这样做的原因是因为它出现二义性的原因就是对于多重括号的匹配展开方式有左右两种选择,但是实际上并不需要那么多S作为子推导,我们可以消去一个S,文法仍然等效</p></li></ul><h2 id="h2-9">参考</h2><ul><li><a href="https://zhuanlan.zhihu.com/p/31224910" target="_blank">词法分析 | 分析树和二义性文法</a></li></ul><ul><li><a href="https://blog.51cto.com/luochen2015/1859058" target="_blank">51cto blog</a></li></ul><ul><li><a href="https://blog.csdn.net/weixin_44143695/article/details/103229044" target="_blank">二义性文法的理解和消除方法</a></li></ul><ul><li><a href="https://blog.csdn.net/qq_45180475/article/details/107815080" target="_blank">2.5.3 文法二义性的消除</a></li></ul></div>
+    <div class="dir-tree"><ul><li><a href="../../md-docs/README" >README</a></li></ul><ul><li><a href="../../md-docs/上下文无关文法" >上下文无关文法</a></li></ul><ul><li><a href="../../md-docs/消除左递归" >消除左递归</a></li></ul><ul><li><a href="../../md-docs/first-follow-select" >first-follow-select</a></li></ul><ul><li><a href="../../md-docs/LL1" >LL1</a></li></ul><ul><li><a href="../../md-docs/RE-NFA-DFA" >RE-NFA-DFA</a></li></ul><ul><li><a href="../../md-docs/使用方法" >使用方法</a></li></ul><ul><li><a href="../../编译原理/引论" >编译原理</a><ul><li><a href="../../编译原理/引论" >引论</a></li></ul><ul><li><a href="../../编译原理/简单的翻译器" >简单的翻译器</a></li></ul><ul><li><a href="../../编译原理/词法分析" >词法分析</a></li></ul><ul><li><a href="../../编译原理/语法分析" >语法分析</a></li></ul><ul><li><a href="../../编译原理/语法制导翻译" >语法制导翻译</a></li></ul><ul><li><a href="../../编译原理/中间代码生成" >中间代码生成</a></li></ul><ul><li><a href="../../编译原理/运行时环境" >运行时环境</a></li></ul><ul><li><a href="../../编译原理/后端代码生成" >后端代码生成</a></li></ul><ul><li><a href="../../编译原理/机器无关优化" >机器无关优化</a></li></ul><ul><li><a href="../../编译原理/指令级并行" >指令级并行</a></li></ul><ul><li><a href="../../编译原理/并行性和局部性优化" >并行性和局部性优化</a></li></ul><ul><li><a href="../../编译原理/过程间分析" >过程间分析</a></li></ul></li></ul></div>
+    <div class="zood"><a class="" href="https://github.com/luzhixing12345/zood" target="_blank">zood</a></div>
+    <script type="text/javascript" src="../../../js/next_front.js"></script><script>addLink("../../编译原理/引论","../../编译原理/词法分析","ab")</script><script type="text/javascript" src="../../../js/change_mode.js"></script><script>addChangeModeButton("../../../img/sun.png","../../../img/moon.png")</script><script type="text/javascript" src="../../../js/copy_code.js"></script><script>addCodeCopy("../../../img/before_copy.png","../../../img/after_copy.png")</script><script type="text/javascript" src="../../../js/navigator.js"></script><script type="text/javascript" src="../../../js/prism.js"></script><script type="text/javascript" src="../../../js/picture_preview.js"></script><script type="text/javascript" src="../../../js/check_box.js"></script>
+</body>
+
+</html>

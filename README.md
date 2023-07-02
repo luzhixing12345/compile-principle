@@ -28,9 +28,11 @@
 
   实验部分就有很多优秀的课程设计实验了
 
+  - [北京大学-编译原理](https://pku-minic.github.io/online-doc/#/)
   - [南京大学-编译原理](https://cs.nju.edu.cn/changxu/2_compiler/index.html)
   - [CMU 15-411 Compiler Design](https://www.cs.cmu.edu/~janh/courses/411/23/)
   - [Stanford CS143](https://suif.stanford.edu/dragonbook/)
+  - [武汉大学-编译原理实验](..)
 
   笔者关于实验的解答也会放在其他的仓库, 并在那里进行相应的代码说明
 
