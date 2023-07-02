@@ -1,10 +1,5 @@
 .:
 - README: 1
-- 消除左递归: 2
-- first-follow-select: 3
-- LL1: 4
-- RE-NFA-DFA: 5
-- 使用方法: 6
 编译原理:
 - 引论: 1
 - 简单的翻译器: 2
