@@ -1,5 +1,4 @@
 
-import os
 import copy
 import itertools
 from .utils import print_set
