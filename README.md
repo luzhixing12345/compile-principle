@@ -36,7 +36,8 @@
 
   笔者关于实验的解答也会放在其他的仓库, 并在那里进行相应的代码说明
 
-## 资源获取
+## 参考
 
+- [dragon-book-exercise-answers](https://github.com/fool2fish/dragon-book-exercise-answers)
 - [编译原理-龙书.pdf](https://github.com/luzhixing12345/compile-principle/releases/download/v0.0.1/compile-principle.pdf)
 - [武汉大学编译原理期末复习试卷](https://github.com/luzhixing12345/compile-principle/releases/download/v0.0.1/papers.zip)

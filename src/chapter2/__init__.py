@@ -1,2 +1,2 @@
-from .base import CFGCore
+from .cfg import CFGCore
 from .ll1 import LL1
