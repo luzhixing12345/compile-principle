@@ -58,7 +58,13 @@ options:
   enable_picture_preview: true
 
   # 支持 mermaid
-  enable_mermaid: true
+  enable_mermaid: false
+
+  # 使用 github 图标
+  enable_github: true
+
+  # 支持 latex 数学公式
+  enable_latex: false
 
 # 页面布局
 position:
@@ -141,59 +147,6 @@ color:
   # 其他阴影参考: https://getcssscan.com/css-box-shadow-examples
   markdown_picture_box_shadow: "rgba(100, 100, 111, 0.2) 0px 7px 29px 0px"
 
-  # 代码段的背景颜色
-  markdown_code_bg_color: "#161823"
-  markdown_code_bg_color_dark: "#303030"
-
-  # 代码段的注释颜色
-  markdown_code_comment: '#6A9955'
-  markdown_code_comment_dark: '#6A9955'
-
-  # 代码段的文字颜色
-  markdown_code_text : '#fff'
-  markdown_code_text_dark : '#fff'
-
-  # 代码段被选中时的背景颜色
-  markdown_code_selected : "#318FFE"
-
-  # 代码段被选中时的文本颜色
-  markdown_code_color_selected : "#fff"
-
-  # 代码段括号颜色
-  markdown_code_punctuation: "#E3C91C"
-
-  # 代码段常量,标签颜色
-  markdown_code_constant :  "#e1e1e1"
-  markdown_code_constant_dark :  "#e1e1e1"
-
-  # 代码段字符串颜色
-  markdown_code_string: "#D89B6F"
-  markdown_code_string_dark: "#D89B6F"
-
-  # 代码段运算符颜色
-  markdown_code_operator: "#fff"
-  markdown_code_operator_dark: "#fff"
-
-  # 代码段关键字颜色
-  markdown_code_keyword: "#569CD6"
-  markdown_code_keyword_dark: "#569CD6"
-
-  # 代码段预处理颜色
-  markdown_code_directive_keyword: "#C586C0"
-  markdown_code_directive_keyword_dark: "#C586C0"
-
-  # 代码段函数颜色
-  markdown_code_function: "#EAE378"
-  markdown_code_function_dark: "#EAE378"
-
-  # 代码段类颜色
-  markdown_code_class: "#59B294"
-  markdown_code_class_dark: "#59B294"
-
-  # json key颜色
-  markdown_code_jsonkey: "#9CDCFE"
-  markdown_code_jsonkey_dark: "#9CDCFE"
-
   # 代码段阴影
   # 其他阴影参考: https://getcssscan.com/css-box-shadow-examples
   markdown_code_box_shadow: "rgba(17, 17, 26, 0.1) 0px 0px 16px"
@@ -222,13 +175,13 @@ color:
   dir_tree_color: "#000"
 
   # 一级目录悬浮时(被选中)字体颜色
-  dir_tree_hover_color: "#0366d6"
+  dir_tree_hover_color: "#000"
 
   # 二级目录字体颜色
   dir_second_tree_color: "#000"
 
   # 二级目录悬浮时(被选中)字体颜色
-  dir_second_tree_hover_color: "#0366d6"
+  dir_second_tree_hover_color: "#000"
 
   # 图片下方文字颜色(需要在options中开启)
   picture_text_color: "#a3a1a1"
