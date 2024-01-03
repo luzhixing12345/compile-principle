@@ -64,7 +64,7 @@ options:
   enable_github: true
 
   # 支持 latex 数学公式
-  enable_latex: false
+  enable_latex: true
 
 # 页面布局
 position:

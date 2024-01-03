@@ -130,3 +130,5 @@ dmypy.json
 
 a.py
 books/
+.clang-format
+a.c
