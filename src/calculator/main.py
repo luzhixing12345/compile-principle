@@ -8,6 +8,7 @@ class Token(object):
         self.line_number = line_number
         self.column_number = column_number
 
+
     def __str__(self):
         """String representation of the class instance.
         Examples:
